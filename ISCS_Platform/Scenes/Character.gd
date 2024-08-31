@@ -9,6 +9,7 @@ var can_animate: bool = true
 var is_moving: bool = false
 var on_water: bool = false
 var on_mud: bool = false
+var on_ground: bool = true
 var tile: Vector2 = Vector2(0,0)
 var saved_direction: Vector2 = Vector2(0,0)
 
@@ -22,6 +23,8 @@ func _physics_process(delta):
 	if on_mud and saved_direction != Vector2.ZERO:
 		move(saved_direction)
 		animate(saved_direction)
+		if !is_moving or on_ground:
+			on_mud = false
 	
 	global_position = global_position.move_toward(tile, 0.6)
 	
@@ -66,7 +69,7 @@ func animate(direction: Vector2):
 			animation_player.play("RightSwim")
 		if direction == Vector2.DOWN:
 			animation_player.play("DownSwim")
-	elif !on_water and on_mud:
+	elif on_mud and !on_water:
 		animation_player.play("MudSlide")
 	else:
 		if direction == Vector2.LEFT:
@@ -109,14 +112,16 @@ func move(direction: Vector2):
 		elif tile_data.get_custom_data("ground"):
 			on_mud = false
 			on_water = false
+			on_ground = true
 		elif tile_data.get_custom_data("mud"):
 			saved_direction = direction
 			on_mud = true
 			on_water = false
+			on_ground = false
 		elif tile_data.get_custom_data("water"):
 			on_mud = false
 			on_water = true
-			
+			on_ground = false
 	
 	tile = tile_map.map_to_local(target_tile)
 	
