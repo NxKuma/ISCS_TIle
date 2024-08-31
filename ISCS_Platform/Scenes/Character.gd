@@ -10,6 +10,7 @@ var is_moving: bool = false
 var on_water: bool = false
 var on_mud: bool = false
 var tile: Vector2 = Vector2(0,0)
+var saved_direction: Vector2 = Vector2(0,0)
 
 # Called when the node enters the scene tree for the first time.
 
@@ -18,6 +19,10 @@ func _physics_process(delta):
 		return
 	if animation_player.is_playing() == false:
 		is_moving = false
+	if on_mud and saved_direction != Vector2.ZERO:
+		move(saved_direction)
+		animate(saved_direction)
+	
 	global_position = global_position.move_toward(tile, 0.6)
 	
 
@@ -73,8 +78,10 @@ func animate(direction: Vector2):
 		if direction == Vector2.DOWN:
 			animation_player.play("DownHop")
 		
+	
 
 func move(direction: Vector2):
+	
 	# Get current tile Vector2
 	var current_tile: Vector2i = tile_map.local_to_map(global_position)
 	# Get target tile Vector2
@@ -99,6 +106,16 @@ func move(direction: Vector2):
 			return
 		elif tile_data.get_custom_data("walkable") == false:
 			return
+		elif tile_data.get_custom_data("ground"):
+			on_mud = false
+			on_water = false
+		elif tile_data.get_custom_data("mud"):
+			saved_direction = direction
+			on_mud = true
+			on_water = false
+		elif tile_data.get_custom_data("water"):
+			on_mud = false
+			on_water = true
 			
 	
 	tile = tile_map.map_to_local(target_tile)
