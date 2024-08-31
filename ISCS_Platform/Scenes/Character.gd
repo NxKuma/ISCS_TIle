@@ -42,6 +42,14 @@ func _process(delta):
 
 func animate(direction: Vector2):
 	if !can_animate:
+		if direction == Vector2.LEFT:
+			sprite_2d.frame = 16 #Look Right
+		if direction == Vector2.UP:
+			sprite_2d.frame = 24 #Look Right
+		if direction == Vector2.RIGHT:
+			sprite_2d.frame = 0 #Look Right
+		if direction == Vector2.DOWN:
+			sprite_2d.frame = 8 #Look Down
 		return
 	
 	if on_water and !on_mud:
