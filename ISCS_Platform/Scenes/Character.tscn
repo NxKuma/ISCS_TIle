@@ -181,3 +181,6 @@ zoom = Vector2(4, 4)
 libraries = {
 "": SubResource("AnimationLibrary_tcrkf")
 }
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
+target_position = Vector2(0, 16)
