@@ -17,13 +17,20 @@ var saved_direction: Vector2 = Vector2(0,0)
 func _physics_process(delta):
 	if is_moving == false:
 		return
+	
+	global_position = global_position.move_toward(tile, 0.6)
+	
 	if animation_player.is_playing() == false:
 		is_moving = false
 	if on_mud and saved_direction != Vector2.ZERO:
 		move(saved_direction)
 		animate(saved_direction)
+	if on_water and saved_direction != Vector2.ZERO:
+		move(saved_direction)
+		animate(saved_direction)
 	
-	global_position = global_position.move_toward(tile, 0.6)
+	
+	
 	
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -116,6 +123,9 @@ func move(direction: Vector2):
 		elif tile_data.get_custom_data("water"):
 			on_mud = false
 			on_water = true
+			
+		if on_water:
+			saved_direction = tile_data.get_custom_data("direction")
 			
 	
 	tile = tile_map.map_to_local(target_tile)

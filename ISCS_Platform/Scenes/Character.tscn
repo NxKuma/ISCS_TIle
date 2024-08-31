@@ -174,7 +174,7 @@ vframes = 9
 frame = 32
 
 [node name="Camera2D" type="Camera2D" parent="Sprite2D"]
-zoom = Vector2(4, 4)
+zoom = Vector2(6, 6)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
