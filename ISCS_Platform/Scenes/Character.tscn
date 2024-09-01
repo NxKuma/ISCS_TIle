@@ -164,10 +164,14 @@ _data = {
 "UpSwim": SubResource("Animation_udwiw")
 }
 
+<<<<<<< Updated upstream
 [sub_resource type="CircleShape2D" id="CircleShape2D_afiph"]
 radius = 8.0
 
 [node name="Character" type="Node2D"]
+=======
+[node name="Character" type="Node2D" groups=["Character"]]
+>>>>>>> Stashed changes
 script = ExtResource("1_y5lix")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

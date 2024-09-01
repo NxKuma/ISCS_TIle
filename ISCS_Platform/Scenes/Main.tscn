@@ -15,6 +15,19 @@ position = Vector2(8, -8)
 position = Vector2(-24, 8)
 
 [node name="Destination" parent="Portal" index="1"]
+<<<<<<< Updated upstream
 position = Vector2(96, -96)
+=======
+position = Vector2(64, -80)
+scale = Vector2(1e-05, 1e-05)
+
+[node name="Portal2" parent="." instance=ExtResource("3_t8puh")]
+position = Vector2(72, -88)
+
+[node name="Destination" parent="Portal2" index="1"]
+position = Vector2(-48, 48)
+scale = Vector2(1e-05, 1e-05)
+>>>>>>> Stashed changes
 
 [editable path="Portal"]
+[editable path="Portal2"]

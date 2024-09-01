@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://Scripts/portal.gd" id="1_g8ble"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_k1w31"]
-radius = 8.0
+radius = 4.0
 
 [node name="Portal" type="Area2D" groups=["Character", "Portal"]]
 script = ExtResource("1_g8ble")
@@ -12,6 +12,6 @@ script = ExtResource("1_g8ble")
 shape = SubResource("CircleShape2D_k1w31")
 
 [node name="Destination" type="Marker2D" parent="."]
-position = Vector2(-23, 0)
+position = Vector2(-21, 0)
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

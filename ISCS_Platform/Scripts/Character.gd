@@ -10,7 +10,7 @@ var is_moving: bool = false
 var on_water: bool = false
 var on_mud: bool = false
 var on_ground: bool = true
-var on_portal: bool = true
+var on_portal: bool = false
 var tile: Vector2 = Vector2(0,0)
 var saved_direction: Vector2 = Vector2(0,0)
 
@@ -26,6 +26,9 @@ func _physics_process(delta):
 		animate(saved_direction)
 		if !is_moving or on_ground:
 			on_mud = false
+	if on_portal and saved_direction != Vector2.ZERO:
+		move(saved_direction)
+		animate(saved_direction)
 	
 	global_position = global_position.move_toward(tile, 0.6)
 	
@@ -72,6 +75,8 @@ func animate(direction: Vector2):
 			animation_player.play("DownSwim")
 	elif on_mud and !on_water:
 		animation_player.play("MudSlide")
+	#elif on_portal and !animation_player.is_playing():
+		#
 	else:
 		if direction == Vector2.LEFT:
 			animation_player.play("LeftHop")
@@ -113,6 +118,7 @@ func move(direction: Vector2):
 		elif tile_data.get_custom_data("ground"):
 			on_mud = false
 			on_water = false
+			on_portal = false
 			on_ground = true 
 		elif tile_data.get_custom_data("mud"):
 			saved_direction = direction
@@ -124,6 +130,10 @@ func move(direction: Vector2):
 			on_water = true
 			on_ground = false
 		elif tile_data.get_custom_data("portal"):
+<<<<<<< Updated upstream
+=======
+			saved_direction = direction
+>>>>>>> Stashed changes
 			on_portal = true
 	
 	tile = tile_map.map_to_local(target_tile)
@@ -131,3 +141,19 @@ func move(direction: Vector2):
 	
 	#global_position = tile_map.map_to_local(target_tile)
 	is_moving = true
+<<<<<<< Updated upstream
+=======
+	
+	
+
+
+func _on_area_2d_area_entered(area):
+	if area.is_in_group("Portal"):
+		await get_tree().create_timer(0.475).timeout
+		print(saved_direction)
+		global_position = area.get_child(1).global_position
+		tile = tile_map.map_to_local(global_position)
+		#move(self.saved_direction)
+		#animate(self.saved_direction)
+		
+>>>>>>> Stashed changes
