@@ -3,6 +3,9 @@
 [ext_resource type="Texture2D" uid="uid://b2q81enlrq10p" path="res://Art/Frog-Sheet.png" id="1_8wcwc"]
 [ext_resource type="Script" path="res://Scripts/Character.gd" id="1_y5lix"]
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_afiph"]
+radius = 7.0
+
 [sub_resource type="Animation" id="Animation_5qr8r"]
 resource_name = "DownHop"
 length = 0.6
@@ -164,9 +167,6 @@ _data = {
 "UpSwim": SubResource("Animation_udwiw")
 }
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_afiph"]
-radius = 8.0
-
 [node name="Character" type="Node2D"]
 script = ExtResource("1_y5lix")
 
@@ -174,10 +174,15 @@ script = ExtResource("1_y5lix")
 texture = ExtResource("1_8wcwc")
 hframes = 4
 vframes = 9
-frame = 8
+frame = 32
 
 [node name="Camera2D" type="Camera2D" parent="Sprite2D"]
 zoom = Vector2(4, 4)
+
+[node name="Area2D" type="Area2D" parent="Sprite2D" groups=["Portal"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/Area2D"]
+shape = SubResource("CircleShape2D_afiph")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -187,9 +192,4 @@ libraries = {
 [node name="RayCast2D" type="RayCast2D" parent="."]
 target_position = Vector2(0, 16)
 
-[node name="Area2D" type="Area2D" parent="." groups=["Portal"]]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("CircleShape2D_afiph")
-
-[connection signal="area_entered" from="Area2D" to="." method="_on_area_2d_area_entered"]
+[connection signal="area_entered" from="Sprite2D/Area2D" to="." method="_on_area_2d_area_entered"]

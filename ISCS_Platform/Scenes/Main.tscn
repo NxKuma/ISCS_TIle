@@ -8,13 +8,17 @@
 
 [node name="TileMap" parent="." instance=ExtResource("1_j4fkv")]
 
-[node name="Character" parent="." instance=ExtResource("2_2d53d")]
+[node name="Character" parent="." groups=["Character"] instance=ExtResource("2_2d53d")]
 position = Vector2(8, -8)
+
+[node name="Sprite2D" parent="Character" index="0"]
+frame = 8
 
 [node name="Portal" parent="." instance=ExtResource("3_t8puh")]
 position = Vector2(-24, 8)
 
 [node name="Destination" parent="Portal" index="1"]
-position = Vector2(96, -96)
+position = Vector2(80, -96)
 
+[editable path="Character"]
 [editable path="Portal"]
