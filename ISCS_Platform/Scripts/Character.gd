@@ -4,7 +4,7 @@ extends Node2D
 @onready var sprite_2d = $Sprite2D
 @onready var animation_player = $AnimationPlayer
 @onready var ray_2d = $RayCast2D
-@onready var area_2d = $Area2D
+@onready var area_2d = $"../Area2D"
 
 var can_animate: bool = true
 var is_moving: bool = false
@@ -28,7 +28,7 @@ func _physics_process(delta):
 		if !is_moving or on_ground:
 			on_mud = false
 	
-
+	
 	global_position = global_position.move_toward(tile, 0.6)
 	
 
@@ -53,26 +53,16 @@ func _process(delta):
 
 func animate(direction: Vector2):
 	if !can_animate:
+		if on_mud:
+			return
 		if direction == Vector2.LEFT:
-			if on_mud:
-				sprite_2d.frame = 32
-			else:
-				sprite_2d.frame = 16 #Look Right
+			sprite_2d.frame = 16 #Look Right
 		if direction == Vector2.UP:
-			if on_mud:
-				sprite_2d.frame = 35
-			else:
-				sprite_2d.frame = 24 #Look Right
+			sprite_2d.frame = 24 #Look Right
 		if direction == Vector2.RIGHT:
-			if on_mud:
-				sprite_2d.frame = 34
-			else:
-				sprite_2d.frame = 0 #Look Right
+			sprite_2d.frame = 0 #Look Right
 		if direction == Vector2.DOWN:
-			if on_mud:
-				sprite_2d.frame = 33
-			else:
-				sprite_2d.frame = 8 #Look Down
+			sprite_2d.frame = 8 #Look Down
 		return
 	
 	if on_water and !on_mud:
@@ -85,7 +75,10 @@ func animate(direction: Vector2):
 		if direction == Vector2.DOWN:
 			animation_player.play("DownSwim")
 	elif on_mud and !on_water:
-		animation_player.play("MudSlide")
+		if direction == Vector2.RIGHT or direction == Vector2.UP:
+			animation_player.play("MudSlide")
+		else:
+			animation_player.play_backwards("MudSlide")
 	else:
 		if direction == Vector2.LEFT:
 			animation_player.play("LeftHop")
@@ -151,6 +144,7 @@ func move(direction: Vector2):
 
 func _on_area_2d_area_entered(area):
 	if area.is_in_group("Portal"):
+		
 		global_position = area.get_child(1).position
 		tile = tile_map.map_to_local(area.get_child(1).position)
 		
