@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://bjtrtkyu7quuj"]
 
 [ext_resource type="Script" path="res://Scenes/fireflies.gd" id="1_gih10"]
-[ext_resource type="Texture2D" path="res://Art/firefly.png" id="1_ufcwa"]
+[ext_resource type="Texture2D" uid="uid://bwnd803q3e4km" path="res://Art/firefly.png" id="1_ufcwa"]
 
 [sub_resource type="Animation" id="Animation_c5up4"]
 length = 0.001
@@ -44,9 +44,12 @@ _data = {
 script = ExtResource("1_gih10")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(8, -8)
 texture = ExtResource("1_ufcwa")
 hframes = 4
+
+[node name="Camera2D" type="Camera2D" parent="Sprite2D"]
+enabled = false
+zoom = Vector2(6, 6)
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -54,7 +57,9 @@ libraries = {
 }
 
 [node name="Timer" type="Timer" parent="."]
-wait_time = 5.0
+wait_time = 3.0
 autostart = true
+
+[node name="RayCast2D" type="RayCast2D" parent="."]
 
 [connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
