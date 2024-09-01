@@ -10,6 +10,7 @@ var is_moving: bool = false
 var on_water: bool = false
 var on_mud: bool = false
 var on_ground: bool = true
+var on_portal: bool = true
 var tile: Vector2 = Vector2(0,0)
 var saved_direction: Vector2 = Vector2(0,0)
 
@@ -112,7 +113,7 @@ func move(direction: Vector2):
 		elif tile_data.get_custom_data("ground"):
 			on_mud = false
 			on_water = false
-			on_ground = true
+			on_ground = true 
 		elif tile_data.get_custom_data("mud"):
 			saved_direction = direction
 			on_mud = true
@@ -122,6 +123,8 @@ func move(direction: Vector2):
 			on_mud = false
 			on_water = true
 			on_ground = false
+		elif tile_data.get_custom_data("portal"):
+			on_portal = true
 	
 	tile = tile_map.map_to_local(target_tile)
 	
