@@ -13,10 +13,12 @@ var is_water: bool = false
 var on_mud: bool = false
 var on_ground: bool = true
 var did_check: bool = false
+var from_portal: bool = false
 
-var tile: Vector2 = Vector2(0,0)
-var next_direction: Vector2 = Vector2(0,0)
-var saved_direction: Vector2 = Vector2(0,0)
+var tile: Vector2 = Vector2.ZERO
+var next_direction: Vector2 = Vector2.ZERO
+var saved_direction: Vector2 = Vector2.ZERO
+var saved_coords: Vector2 = Vector2.ZERO
 var current_tile: Vector2i
 var current_data: TileData
 
@@ -46,12 +48,14 @@ func _physics_process(delta):
 		if !is_moving or on_ground:
 			on_water = false
 		animate(saved_direction)
-
-	if global_position != tile:
-		current_tile = tile_map.local_to_map(global_position)
-		global_position = global_position.move_toward(tile, 0.6)
-
-
+		
+	current_tile = tile_map.local_to_map(global_position)
+	global_position = global_position.move_toward(tile, 0.6)
+	
+	if from_portal:
+		global_position = saved_coords
+		current_tile = tile_map.local_to_map(saved_coords)
+		from_portal = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
@@ -59,6 +63,8 @@ func _process(delta):
 	on_water = current_data.get_custom_data("water")
 	if is_moving:
 		return
+		
+	print(on_water)
 	if Input.is_action_pressed("left"):
 		move(Vector2.LEFT)
 		animate(Vector2.LEFT)
@@ -118,7 +124,7 @@ func move(direction: Vector2, in_water: bool = false):
 	)
 	# Get custom data layer 
 	var tile_data: TileData = tile_map.get_cell_tile_data(0, target_tile)
-	
+	print("Target", target_tile)
 	ray_2d.target_position = direction * 16
 	ray_2d.force_raycast_update()
 	if in_water:
@@ -134,7 +140,7 @@ func move(direction: Vector2, in_water: bool = false):
 			can_animate = true
 
 	for index in tile_map.get_layers_count():
-		tile_map.get_cell_tile_data(index, target_tile)
+		#tile_data = tile_map.get_cell_tile_data(index, target_tile)
 		if !tile_data is TileData:
 			return
 		elif tile_data.get_custom_data("walkable") == false:
@@ -152,24 +158,29 @@ func move(direction: Vector2, in_water: bool = false):
 			on_ground = false
 		elif tile_data.get_custom_data("water"):
 			if in_water:
-				did_check = false
-				next_direction = tile_data.get_custom_data("direction")
-				saved_direction = current_data.get_custom_data("direction")
+				if tile_data.get_custom_data("obstacle"):
+					print("Hello")
+					return
+				else:
+					did_check = false
+					next_direction = tile_data.get_custom_data("direction")
+					saved_direction = current_data.get_custom_data("direction")
 			else:
 				did_check = false
 				saved_direction = tile_data.get_custom_data("direction")
 			on_mud = false
 			is_water = true
 			on_ground = false
-	
+		
 	tile = tile_map.map_to_local(target_tile)
 	is_moving = true
 
 func _on_area_2d_area_entered(area):
 	if area.is_in_group("Portal"):
 		await get_tree().create_timer(0.6).timeout
-		global_position = area.get_child(1).global_position
-		print(global_position)
+		from_portal = true
+		saved_coords = area.get_child(1).global_position
+		#Put the coords in position
+		global_position = saved_coords
+		current_tile = tile_map.local_to_map(saved_coords)
 		tile = tile_map.map_to_local(global_position)
-		print(tile)
-		
