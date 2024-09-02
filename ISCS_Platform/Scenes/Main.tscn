@@ -13,7 +13,10 @@ layer_1/tile_data = PackedInt32Array(196618, 589825, 7, -262128, 65536, 5, -4587
 layer_2/tile_data = PackedInt32Array()
 
 [node name="Character" parent="." groups=["Character"] instance=ExtResource("2_2d53d")]
-position = Vector2(-8, -56)
+position = Vector2(184, -80)
+
+[node name="CPUParticles2D" parent="Character" index="3"]
+color = Color(0.305882, 0.415686, 0.278431, 1)
 
 [node name="Portal" parent="." instance=ExtResource("3_t8puh")]
 position = Vector2(-24, 8)

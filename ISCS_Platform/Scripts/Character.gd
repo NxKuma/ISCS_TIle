@@ -8,13 +8,13 @@ extends Node2D
 
 var can_animate: bool = true
 var is_moving: bool = false
-var on_water: bool = false
 var is_water: bool = false
+var is_ground: bool = false
+var on_water: bool = false
 var on_mud: bool = false
 var on_ground: bool = true
 var did_check: bool = false
 var from_portal: bool = false
-var is_obstacle: bool = false
 
 var tile: Vector2 = Vector2.ZERO
 var next_direction: Vector2 = Vector2.ZERO
@@ -27,49 +27,51 @@ func _ready():
 	# Get current tile Vector2
 	current_tile = tile_map.local_to_map(global_position)
 	current_data= tile_map.get_cell_tile_data(0, current_tile)
+	#animation_player.speed_scale = 1.5
 
 
 # Called when the node enters the scene tree for the first time.
 func _physics_process(delta):
 	current_data= tile_map.get_cell_tile_data(0, current_tile)
 	current_tile = tile_map.local_to_map(global_position)
-	if !is_obstacle:
-		global_position = global_position.move_toward(tile, 0.6)
 	
 	if is_moving == false:
 		return
-	if on_mud and saved_direction != Vector2.ZERO:
+	if animation_player.is_playing() == false:
+		
+		is_moving = false
+	
+	if on_mud and saved_direction != Vector2.ZERO :
 		move(saved_direction)
 		animate(saved_direction)
 		if !is_moving or on_ground:
 			on_mud = false
-	if animation_player.is_playing() == false:
-		is_moving = false
-	
+			
 	if on_water and saved_direction != Vector2.ZERO and is_water:
 		if is_water and saved_direction == next_direction:
 			move(next_direction, true)
+			animate(next_direction)
 		else:
 			move(saved_direction, true)
+			animate(saved_direction)
 		if !is_moving or on_ground:
 			on_water = false
-		animate(saved_direction)
+	
 		
-	if global_position != tile:
-		pass
-		
+	if !global_position.distance_to(tile) == 0:
+		is_moving = true
+		global_position = global_position.move_toward(tile, 0.5)
+		animation_player.get_animation(animation_player.current_animation).set_loop_mode(1)
 	else:
-		print("Global",global_position)
-		print("Tile", tile)
-		#if ray_2d.is_colliding():
-			#can_animate = false
-			#return
-		#else:
-			#can_animate = true
+		animation_player.get_animation(animation_player.current_animation).set_loop_mode(0)
+		animation_player.stop()
+		is_moving = false
 	
 	if from_portal:
 		global_position = saved_coords
 		current_tile = tile_map.local_to_map(saved_coords)
+		animation_player.stop()
+		is_moving=false
 		from_portal = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -77,9 +79,11 @@ func _process(delta):
 	
 	on_water = current_data.get_custom_data("water")
 	on_mud = current_data.get_custom_data("mud")
+	on_ground = current_data.get_custom_data("ground")
+
 	if is_moving:
 		return
-		
+	saved_direction = Vector2.ZERO
 	if Input.is_action_pressed("left"):
 		move(Vector2.LEFT)
 		animate(Vector2.LEFT)
@@ -92,6 +96,8 @@ func _process(delta):
 	elif Input.is_action_pressed("down"):
 		move(Vector2.DOWN)
 		animate(Vector2.DOWN)
+	
+		
 
 func animate(direction: Vector2):
 	if !can_animate:
@@ -139,61 +145,54 @@ func move(direction: Vector2, in_water: bool = false):
 	)
 	# Get custom data layer 
 	var tile_data: TileData = tile_map.get_cell_tile_data(0, target_tile)
-	#ray_2d.target_position = direction * 16
-	#
+	
+	
 	if in_water:
 		await get_tree().create_timer(0.1).timeout
-	#ray_2d.force_raycast_update()
-	
-	var arr: Array = [1,2]
-	for index in arr:
-		#print(index)
-		tile_data = tile_map.get_cell_tile_data(index-1, target_tile)
+	if is_water and in_water :
+		ray_2d.target_position = direction * 8
+	else:
+		ray_2d.target_position = direction * 16
+	ray_2d.force_raycast_update()
+	if ray_2d.is_colliding():
+		can_animate = false
+		is_moving = false
+		await get_tree().create_timer(0.1).timeout
+		return
+	else:
+		can_animate = true
+
+
+	for index in tile_map.get_layers_count():
 		if !tile_data is TileData:
 			return
 		else:
-			if index == 2:
-				if tile_data.get_custom_data("obstacle"):
-					#print("Hello")
-					tile = tile_map.map_to_local(target_tile)
-					can_animate = false
-					is_moving = false
-					if on_mud:
-						await get_tree().create_timer(0.2).timeout
-					is_moving = false
-					is_obstacle = true
-					return
-			elif index == 1:
-				#print("Dead")
-				is_obstacle = false
-				
-				can_animate = true
-				if tile_data.get_custom_data("walkable") == false:
-					return
-				elif tile_data.get_custom_data("ground"):
+			if tile_data.get_custom_data("walkable") == false:
+				return
+			elif tile_data.get_custom_data("ground"):
+				did_check = false
+				on_mud = false
+				on_water = false
+				on_ground = true 
+			elif tile_data.get_custom_data("mud"):
+				saved_direction = direction
+				did_check = false
+				on_mud = true
+				on_water = false
+				is_water = false
+				on_ground = false
+			elif tile_data.get_custom_data("water"):
+				if in_water:
+					did_check = true
+					next_direction = tile_data.get_custom_data("direction")
+					saved_direction = current_data.get_custom_data("direction")
+				else:
 					did_check = false
-					on_mud = false
-					on_water = false
-					on_ground = true 
-				elif tile_data.get_custom_data("mud"):
-					saved_direction = direction
-					did_check = false
-					on_mud = true
-					on_water = false
-					on_ground = false
-				elif tile_data.get_custom_data("water"):
-					if in_water:
-						did_check = true
-						next_direction = tile_data.get_custom_data("direction")
-						saved_direction = current_data.get_custom_data("direction")
-					else:
-						did_check = false
-						saved_direction = tile_data.get_custom_data("direction")
-					on_mud = false
-					is_water = true
-					on_ground = false
-				tile = tile_map.map_to_local(target_tile)
-				is_moving = true
+					saved_direction = tile_data.get_custom_data("direction")
+				on_mud = false
+				is_water = true
+				on_ground = false
+			
 	#tile_data = tile_map.get_cell_tile_data(0, target_tile)
 	##if !did_check:
 		##if ray_2d.is_colliding():
@@ -204,7 +203,8 @@ func move(direction: Vector2, in_water: bool = false):
 			##return
 		##else:
 			##can_animate = true
-	#
+	tile = tile_map.map_to_local(target_tile)
+	is_moving = true
 	#tile = tile_map.map_to_local(target_tile)
 	#is_moving = true
 
