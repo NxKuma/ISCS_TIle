@@ -32,7 +32,6 @@ func _ready():
 	# Get current tile Vector2
 	current_tile = tile_map.local_to_map(global_position)
 	current_data= tile_map.get_cell_tile_data(0, current_tile)
-	#animation_player.speed_scale = 1.5
 
 
 # Called when the node enters the scene tree for the first time.
@@ -51,12 +50,14 @@ func _physics_process(delta):
 	if (on_ground or on_water) and is_mud:
 		mud_in_sfx.play()
 	
+	#Sliding Tile: Mud
 	if on_mud and saved_direction != Vector2.ZERO and !is_ground :
 		move(saved_direction)
 		animate(saved_direction)
 		if !is_moving or on_ground:
 			on_mud = false
-			
+	
+	#Forced Movement: Water		
 	if on_water and saved_direction != Vector2.ZERO:
 		if !is_moving or is_ground or on_ground:
 			on_water = false
@@ -68,7 +69,8 @@ func _physics_process(delta):
 		elif is_water and saved_direction != next_direction:
 			move(saved_direction, true)
 			animate(saved_direction)
-		
+	
+	#Tile-based Movement
 	if !global_position.distance_to(tile) == 0:
 		is_moving = true
 		global_position = global_position.move_toward(tile, 0.5)
@@ -228,22 +230,10 @@ func move(direction: Vector2, in_water: bool = false):
 				is_water = true
 				is_mud = false
 				is_ground = false
-				
-			
-	#tile_data = tile_map.get_cell_tile_data(0, target_tile)
-	##if !did_check:
-		##if ray_2d.is_colliding():
-			##if in_water:
-				##did_check = true
-				##pass
-			##can_animate = false
-			##return
-		##else:
-			##can_animate = true
+
 	tile = tile_map.map_to_local(target_tile)
 	is_moving = true
-	#tile = tile_map.map_to_local(target_tile)
-	#is_moving = true
+
 
 func _on_area_2d_area_entered(area):
 	if area.is_in_group("Portal"):

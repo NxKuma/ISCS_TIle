@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://tbk6x4ts1e5i"]
 
 [ext_resource type="Script" path="res://Scripts/fireflies.gd" id="1_gih10"]
-[ext_resource type="Texture2D" path="res://Art/firefly.png" id="1_ufcwa"]
-[ext_resource type="Texture2D" path="res://Art/FireLight.png" id="3_ds13c"]
+[ext_resource type="Texture2D" uid="uid://bwnd803q3e4km" path="res://Art/firefly.png" id="1_ufcwa"]
+[ext_resource type="Texture2D" uid="uid://cq5w28lkor8nk" path="res://Art/FireLight.png" id="3_ds13c"]
 
 [sub_resource type="Animation" id="Animation_c5up4"]
 length = 0.001
@@ -61,7 +61,7 @@ autostart = true
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
 color = Color(0.976471, 0.937255, 0.6, 1)
-energy = 0.5
+energy = 0.25
 texture = ExtResource("3_ds13c")
 texture_scale = 2.0
 
