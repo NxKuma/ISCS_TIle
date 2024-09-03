@@ -1,7 +1,13 @@
-[gd_scene load_steps=13 format=3 uid="uid://dfp54jyvr680j"]
+[gd_scene load_steps=18 format=3 uid="uid://dfp54jyvr680j"]
 
 [ext_resource type="Texture2D" uid="uid://b2q81enlrq10p" path="res://Art/Frog-Sheet.png" id="1_8wcwc"]
-[ext_resource type="Script" path="res://Scenes/Character.gd" id="1_y5lix"]
+[ext_resource type="Script" path="res://Scripts/Character.gd" id="1_y5lix"]
+[ext_resource type="AudioStream" uid="uid://uojrgev3xk84" path="res://Audio/One Piece Fast MovementTeleportation (Rokushiki Soru) - Sound Effect for editing.mp3" id="3_ijp4s"]
+[ext_resource type="AudioStream" uid="uid://danjl8gbow2bj" path="res://Audio/Splash Sound Effect.mp3" id="4_wflwm"]
+[ext_resource type="AudioStream" uid="uid://phlak6ng2vme" path="res://Audio/mud.mp3" id="5_0mqb2"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_afiph"]
+radius = 7.0
 
 [sub_resource type="Animation" id="Animation_5qr8r"]
 resource_name = "DownHop"
@@ -72,6 +78,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id="Animation_6jigo"]
 resource_name = "MudSlide"
 length = 0.4
+loop_mode = 1
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -83,6 +90,23 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1.03526, 1, 1),
 "update": 1,
 "values": [32, 33, 34, 35]
+}
+
+[sub_resource type="Animation" id="Animation_dg0ea"]
+resource_name = "MudSlide_R"
+length = 0.4
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1.03526, 1),
+"update": 1,
+"values": [35, 34, 33, 32]
 }
 
 [sub_resource type="Animation" id="Animation_dfel8"]
@@ -158,6 +182,7 @@ _data = {
 "LeftHop": SubResource("Animation_w8vvi"),
 "LeftSwim": SubResource("Animation_ls06e"),
 "MudSlide": SubResource("Animation_6jigo"),
+"MudSlide_R": SubResource("Animation_dg0ea"),
 "RightHop": SubResource("Animation_dfel8"),
 "RightSwim": SubResource("Animation_8d2nm"),
 "UpHop": SubResource("Animation_f8v2g"),
@@ -171,10 +196,15 @@ script = ExtResource("1_y5lix")
 texture = ExtResource("1_8wcwc")
 hframes = 4
 vframes = 9
-frame = 32
+frame = 33
 
 [node name="Camera2D" type="Camera2D" parent="Sprite2D"]
-zoom = Vector2(4, 4)
+zoom = Vector2(5, 5)
+
+[node name="Area2D" type="Area2D" parent="Sprite2D" groups=["Portal"]]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Sprite2D/Area2D"]
+shape = SubResource("CircleShape2D_afiph")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -182,4 +212,18 @@ libraries = {
 }
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
-target_position = Vector2(0, 16)
+target_position = Vector2(0, 8)
+
+[node name="TeleportSFX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_ijp4s")
+volume_db = -5.0
+
+[node name="WaterInSFX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_wflwm")
+volume_db = 5.0
+
+[node name="MudInSFX" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("5_0mqb2")
+volume_db = -5.0
+
+[connection signal="area_entered" from="Sprite2D/Area2D" to="." method="_on_area_2d_area_entered"]

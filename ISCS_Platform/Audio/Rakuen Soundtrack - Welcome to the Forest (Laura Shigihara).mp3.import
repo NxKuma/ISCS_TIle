@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bp8aa10uaguhj"
+path="res://.godot/imported/Rakuen Soundtrack - Welcome to the Forest (Laura Shigihara).mp3-70775b105280fd1524a6048fb7407fa7.mp3str"
+
+[deps]
+
+source_file="res://Audio/Rakuen Soundtrack - Welcome to the Forest (Laura Shigihara).mp3"
+dest_files=["res://.godot/imported/Rakuen Soundtrack - Welcome to the Forest (Laura Shigihara).mp3-70775b105280fd1524a6048fb7407fa7.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

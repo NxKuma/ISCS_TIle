@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://uojrgev3xk84"
+path="res://.godot/imported/One Piece Fast MovementTeleportation (Rokushiki Soru) - Sound Effect for editing.mp3-294a220f15d8764950e0d88ebea95bdf.mp3str"
+
+[deps]
+
+source_file="res://Audio/One Piece Fast MovementTeleportation (Rokushiki Soru) - Sound Effect for editing.mp3"
+dest_files=["res://.godot/imported/One Piece Fast MovementTeleportation (Rokushiki Soru) - Sound Effect for editing.mp3-294a220f15d8764950e0d88ebea95bdf.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

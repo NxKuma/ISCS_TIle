@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=3 uid="uid://dsw320v0ifhfd"]
+
+[ext_resource type="AudioStream" uid="uid://bp8aa10uaguhj" path="res://Audio/Rakuen Soundtrack - Welcome to the Forest (Laura Shigihara).mp3" id="1_bywbh"]
+
+[node name="BGM" type="AudioStreamPlayer2D"]
+stream = ExtResource("1_bywbh")
+volume_db = -6.0
+autoplay = true
+stream_paused = true
