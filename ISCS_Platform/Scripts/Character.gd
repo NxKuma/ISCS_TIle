@@ -103,16 +103,14 @@ func animate(direction: Vector2):
 	if !can_animate:
 		if on_mud and is_obstacle:
 			await get_tree().create_timer(0.1).timeout
-			
-		
 		if direction == Vector2.LEFT:
 			if on_mud and is_obstacle:
-				sprite_2d.frame = 33 #Look Right
+				sprite_2d.frame = 34 #Look Right
 			else:
 				sprite_2d.frame = 16 #Look Right
 		if direction == Vector2.UP:
 			if on_mud and is_obstacle:
-				sprite_2d.frame = 34 #Look Right
+				sprite_2d.frame = 35 #Look Right
 			else:
 				sprite_2d.frame = 24 #Look Right
 		if direction == Vector2.RIGHT:
@@ -127,7 +125,7 @@ func animate(direction: Vector2):
 				sprite_2d.frame = 8 #Look Down
 		return
 	
-	if on_water and !on_mud:
+	if (on_water and !on_mud) or is_water:
 		if direction == Vector2.LEFT:
 			animation_player.play("LeftSwim")
 		if direction == Vector2.UP:
@@ -137,10 +135,11 @@ func animate(direction: Vector2):
 		if direction == Vector2.DOWN:
 			animation_player.play("DownSwim")
 	elif on_mud and !on_water:
+		#animation_player.play("MudSlide")
 		if direction == Vector2.RIGHT or direction == Vector2.UP:
 			animation_player.play("MudSlide")
 		else:
-			animation_player.play_backwards("MudSlide")
+			animation_player.play("MudSlide_R")
 	else :
 		if direction == Vector2.LEFT:
 			animation_player.play("LeftHop")
@@ -188,10 +187,14 @@ func move(direction: Vector2, in_water: bool = false):
 				return
 			elif tile_data.get_custom_data("ground"):
 				did_check = false
+				on_ground = true
+				on_water = false
+				on_mud = false
 				is_water = false
 				is_ground = true
 			elif tile_data.get_custom_data("mud"):
 				saved_direction = direction
+				on_mud = true
 				did_check = false
 				is_ground = false
 				is_water = false
