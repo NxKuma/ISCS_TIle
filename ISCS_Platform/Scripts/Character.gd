@@ -1,15 +1,16 @@
 extends Node2D
 
-@onready var tile_map = $"../TileMap"
-@onready var sprite_2d = $Sprite2D
-@onready var animation_player = $AnimationPlayer
-@onready var ray_2d = $RayCast2D
-@onready var area_2d = $"../Area2D"
+@onready var tile_map: TileMap = $"../TileMap"
+@onready var sprite_2d: Sprite2D = $Sprite2D
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var ray_2d: RayCast2D = $RayCast2D
+@onready var area_2d: Area2D = $"../Area2D"
 
 var can_animate: bool = true
 var is_moving: bool = false
 var is_water: bool = false
 var is_ground: bool = false
+var is_obstacle: bool = false
 var on_water: bool = false
 var on_mud: bool = false
 var on_ground: bool = true
@@ -38,10 +39,9 @@ func _physics_process(delta):
 	if is_moving == false:
 		return
 	if animation_player.is_playing() == false:
-		
 		is_moving = false
 	
-	if on_mud and saved_direction != Vector2.ZERO :
+	if on_mud and saved_direction != Vector2.ZERO and !is_ground :
 		move(saved_direction)
 		animate(saved_direction)
 		if !is_moving or on_ground:
@@ -71,7 +71,7 @@ func _physics_process(delta):
 		global_position = saved_coords
 		current_tile = tile_map.local_to_map(saved_coords)
 		animation_player.stop()
-		is_moving=false
+		is_moving = false
 		from_portal = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -101,16 +101,30 @@ func _process(delta):
 
 func animate(direction: Vector2):
 	if !can_animate:
-		if on_mud:
-			return
+		if on_mud and is_obstacle:
+			await get_tree().create_timer(0.1).timeout
+			
+		
 		if direction == Vector2.LEFT:
-			sprite_2d.frame = 16 #Look Right
+			if on_mud and is_obstacle:
+				sprite_2d.frame = 33 #Look Right
+			else:
+				sprite_2d.frame = 16 #Look Right
 		if direction == Vector2.UP:
-			sprite_2d.frame = 24 #Look Right
+			if on_mud and is_obstacle:
+				sprite_2d.frame = 34 #Look Right
+			else:
+				sprite_2d.frame = 24 #Look Right
 		if direction == Vector2.RIGHT:
-			sprite_2d.frame = 0 #Look Right
+			if on_mud and is_obstacle:
+				sprite_2d.frame = 32 #Look Right
+			else:
+				sprite_2d.frame = 0 #Look Right
 		if direction == Vector2.DOWN:
-			sprite_2d.frame = 8 #Look Down
+			if on_mud and is_obstacle:
+				sprite_2d.frame = 33 #Look Right
+			else:
+				sprite_2d.frame = 8 #Look Down
 		return
 	
 	if on_water and !on_mud:
@@ -127,7 +141,7 @@ func animate(direction: Vector2):
 			animation_player.play("MudSlide")
 		else:
 			animation_player.play_backwards("MudSlide")
-	else:
+	else :
 		if direction == Vector2.LEFT:
 			animation_player.play("LeftHop")
 		if direction == Vector2.UP:
@@ -138,6 +152,7 @@ func animate(direction: Vector2):
 			animation_player.play("DownHop")
 
 func move(direction: Vector2, in_water: bool = false):
+	can_animate = true
 	# Get target tile Vector2
 	var target_tile: Vector2i = Vector2i(
 		current_tile.x + direction.x,
@@ -156,7 +171,9 @@ func move(direction: Vector2, in_water: bool = false):
 	ray_2d.force_raycast_update()
 	if ray_2d.is_colliding():
 		can_animate = false
-		is_moving = false
+		if in_water:
+			is_moving = false
+		is_obstacle = true
 		await get_tree().create_timer(0.1).timeout
 		return
 	else:
@@ -171,16 +188,13 @@ func move(direction: Vector2, in_water: bool = false):
 				return
 			elif tile_data.get_custom_data("ground"):
 				did_check = false
-				on_mud = false
-				on_water = false
-				on_ground = true 
+				is_water = false
+				is_ground = true
 			elif tile_data.get_custom_data("mud"):
 				saved_direction = direction
 				did_check = false
-				on_mud = true
-				on_water = false
+				is_ground = false
 				is_water = false
-				on_ground = false
 			elif tile_data.get_custom_data("water"):
 				if in_water:
 					did_check = true
