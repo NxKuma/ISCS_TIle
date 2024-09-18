@@ -9,7 +9,7 @@ extends Node2D
 var rng: int = 0
 var is_move: bool = false
 var tile: Vector2 = Vector2(0,0) 
-var current_tile: Vector2i
+@export var current_tile: Vector2i
 
 func _ready() -> void:
 	rng = randi_range(0,3)
