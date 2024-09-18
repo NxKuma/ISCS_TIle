@@ -31,3 +31,29 @@ text = "[outline_size=25][outline_color=#472a24][b][font_size=64][color=df7126][
 "
 fit_content = true
 scroll_active = false
+
+[node name="Credits" type="RichTextLabel" parent="Control/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[outline_size=25][outline_color=#472a24][b][font_size=22][color=df7126][font=./Font/ARCADECLASSIC.TTF][center]
+Programming
+Neil   Israel   Espiritu
+Mikhael   Villanueva
+Enna   Mikaela   Veloso
+
+
+
+Art
+Neil   Israel   Espiritu
+Enna   Mikaela   Veloso
+
+
+
+Level Design
+Mikhael   Villanueva
+
+
+
+BG Music From:
+Rakuen   Soundtrack -   Welcome   to   the   Forest 
+(Laura   Shigihara)"

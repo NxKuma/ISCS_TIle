@@ -13,11 +13,15 @@ config_version=5
 config/name="Iscs Platform"
 run/main_scene="res://Scenes/Main.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
-config/icon="res://Art/icon.svg"
+config/icon="res://Art/Icon-export.png"
 
 [autoload]
 
 BGM="*res://Scenes/BGM.tscn"
+
+[display]
+
+window/stretch/mode="viewport"
 
 [global_group]
 
